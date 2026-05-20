@@ -1,0 +1,47 @@
+{
+  "_schema": "hermes_agent_bridge_v1",
+  "_description": "Project-local bridge settings for NousResearch/hermes-agent. Keep Hermes as an external specialist, not the primary memory store.",
+  "enabled": true,
+  "command": "hermes",
+  "mode": "oneshot",
+  "stateDir": ".hermes-runtime",
+  "timeoutMs": 180000,
+  "maxTurns": 8,
+  "maxInputChars": 12000,
+  "maxOutputChars": 12000,
+  "cacheTtlMs": 900000,
+  "toolsets": ["web", "search", "file"],
+  "provider": "",
+  "model": "",
+  "routing": {
+    "default": "internal",
+    "hermesTaskTypes": [
+      "hermes",
+      "research",
+      "audit",
+      "deep_research",
+      "repo_audit",
+      "web_search",
+      "competitive_scan"
+    ],
+    "internalTaskTypes": [
+      "tweet",
+      "reply",
+      "bd",
+      "strategy",
+      "analyze",
+      "tone-engine",
+      "content-gen",
+      "sns-analyzer",
+      "bd-outreach",
+      "comment-responder"
+    ]
+  },
+  "guardrails": {
+    "dedupeRequests": true,
+    "redactSecrets": true,
+    "disableHermesMemoryByDefault": true,
+    "allowFileMutation": false,
+    "requireSourceStamp": true
+  }
+}

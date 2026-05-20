@@ -9,6 +9,7 @@ import { FileHandler } from './fileHandler.js';
 import { Notifier } from './notifier.js';
 import { SkillEngine } from './skillEngine.js';
 import { DataValidator } from './dataValidator.js';
+import { HermesBridge } from './hermesBridge.js';
 
 const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
 const hubConfig = JSON.parse(readFileSync('./config/hub.config.json', 'utf8'));
@@ -20,6 +21,7 @@ export class MasterAgent {
     this.notifier = new Notifier();
     this.skillEngine = new SkillEngine();
     this.dataValidator = new DataValidator();
+    this.hermesBridge = new HermesBridge();
     this.sessionId = `session_${Date.now()}`;
   }
 
@@ -29,6 +31,21 @@ export class MasterAgent {
     if (this.tokenMonitor.isNearLimit()) {
       this.notifier.alert('WARNING', 'Token budget at 80%. Pausing non-critical ops.');
       return;
+    }
+
+    if (this.hermesBridge.shouldHandle(type)) {
+      const prompt = Array.isArray(data) ? data.join(' ') : (typeof data === 'string' ? data : JSON.stringify(data));
+      const result = await this.hermesBridge.run({
+        taskType: type,
+        prompt,
+        context: context || {},
+        allowFileMutation: Boolean(context?.allowFileMutation)
+      });
+
+      return {
+        output: result.ok ? result.output : `Hermes bridge error: ${result.error}${result.detail ? `\n${result.detail}` : ''}`,
+        meta: result.meta || null
+      };
     }
 
     const skill = this.skillEngine.loadFor(type);

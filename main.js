@@ -33,6 +33,8 @@ const COMMANDS = {
   '/analyze [project]': 'Analyze project data',
   '/strategy [project]': 'Generate growth strategy',
   '/bd [target]': 'Generate BD outreach',
+  '/hermes [task]': 'Run bounded Hermes specialist agent',
+  '/research [topic]': 'Research with bounded Hermes specialist agent',
   '/calendar [date]': 'View calendar for date',
   '/quit':     'Exit hub'
 };
@@ -73,6 +75,22 @@ async function handleCommand(input) {
       console.log(chalk.bold('\n💬 CASUAL:'), tones.casual);
       console.log(chalk.bold('\n🤝 FORMAL:'), tones.formal);
       break;
+
+    case '/hermes':
+    case '/research': {
+      const prompt = args.join(' ');
+      if (!prompt) { console.log(chalk.red(`Usage: ${cmd} [task]`)); break; }
+
+      console.log(chalk.yellow('\nRunning bounded Hermes specialist...'));
+      const result = await agent.route({
+        type: cmd === '/research' ? 'research' : 'hermes',
+        data: prompt,
+        context: { source: 'cli', allowFileMutation: false }
+      });
+
+      if (result?.output) console.log('\n' + result.output);
+      break;
+    }
 
     case '/quit':
     case '/exit':
