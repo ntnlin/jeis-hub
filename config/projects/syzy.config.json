@@ -1,0 +1,20 @@
+{
+  "project": "syzy",
+  "fullName": "Syzy",
+  "status": "active",
+  "description": "Prediction market on Stellar",
+  "network": "stellar",
+  "tasmilRule": null,
+  "snsKeywords": [
+    "prediction market", "stellar", "beta", "referral",
+    "XLM", "USDC", "community"
+  ],
+  "competitors": [],
+  "whaleAlerts": false,
+  "modules": ["analyze", "strategy", "marketing", "contentGen"],
+  "contentRules": {
+    "neverMention": [],
+    "alwaysFocus": ["prediction markets", "Stellar", "community"]
+  },
+  "dataPath": "files/projects/syzy"
+}

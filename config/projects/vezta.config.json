@@ -1,0 +1,22 @@
+{
+  "project": "vezta",
+  "fullName": "Vezta",
+  "status": "active",
+  "description": "Prediction market platform on Solana",
+  "network": "solana",
+  "tasmilRule": null,
+  "snsKeywords": [
+    "prediction", "prediction market", "prediction trading platform",
+    "polymarket", "kalshi", "solana predict", "sharp score",
+    "whale", "volume spike"
+  ],
+  "competitors": [],
+  "whaleAlerts": true,
+  "modules": ["analyze", "strategy", "marketing", "contentGen"],
+  "contentRules": {
+    "neverMention": [],
+    "alwaysFocus": ["prediction markets", "Solana", "trading"]
+  },
+  "emails": ["jei@vezta.io"],
+  "dataPath": "files/projects/vezta"
+}

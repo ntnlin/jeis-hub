@@ -1,0 +1,21 @@
+{
+  "_schema": "trends_v1",
+  "_description": "SNS keyword trends per project, updated daily",
+  "projects": {
+    "vezta": { "keywords": {}, "lastUpdated": null, "dailyTop10": [] },
+    "tasmil": { "keywords": {}, "lastUpdated": null, "dailyTop10": [] },
+    "syzy":   { "keywords": {}, "lastUpdated": null, "dailyTop10": [] },
+    "setlone":{ "keywords": {}, "lastUpdated": null, "dailyTop10": [] }
+  },
+  "keywordSchema": {
+    "keyword": "string",
+    "frequency": "number",
+    "velocity": "number - growth rate percent",
+    "sentiment": "bullish|bearish|neutral",
+    "sentimentScore": "0-100",
+    "trending": "up|down|stable",
+    "topTweets": [],
+    "emerging": "boolean",
+    "lastSeen": "ISO timestamp"
+  }
+}

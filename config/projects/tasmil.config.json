@@ -1,0 +1,25 @@
+{
+  "project": "tasmil",
+  "fullName": "Tasmil",
+  "status": "active",
+  "description": "DeFAI protocol - AI-powered autonomous finance on Stellar",
+  "network": "stellar",
+  "tasmilRule": {
+    "CRITICAL": "DeFAI ONLY - NOT RWA",
+    "focus": "AI-powered autonomous finance protocols",
+    "banned": "real-world asset tokenization",
+    "flagIfMentioned": ["RWA", "real-world assets", "tokenization of real assets", "asset-backed"]
+  },
+  "snsKeywords": [
+    "DeFAI", "AI finance", "decentralized AI", "stellar defi",
+    "AI agents", "autonomous agents"
+  ],
+  "competitors": [],
+  "whaleAlerts": false,
+  "modules": ["analyze", "strategy", "marketing", "contentGen"],
+  "contentRules": {
+    "neverMention": ["RWA", "real-world assets"],
+    "alwaysFocus": ["DeFAI", "autonomous AI finance", "Stellar"]
+  },
+  "dataPath": "files/projects/tasmil"
+}

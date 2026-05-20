@@ -1,0 +1,18 @@
+{
+  "project": "setlone",
+  "fullName": "Setlone",
+  "status": "tbd",
+  "description": "TBD - Jei defines",
+  "network": "tbd",
+  "tasmilRule": null,
+  "snsKeywords": [],
+  "competitors": [],
+  "whaleAlerts": false,
+  "modules": ["analyze", "strategy", "marketing", "contentGen"],
+  "contentRules": {
+    "neverMention": [],
+    "alwaysFocus": []
+  },
+  "notes": "Jei to define: keywords, network, description, competitors",
+  "dataPath": "files/projects/setlone"
+}

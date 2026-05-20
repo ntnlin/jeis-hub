@@ -1,0 +1,22 @@
+{
+  "category": "growth",
+  "description": "Growth experts to study for frameworks and tactics",
+  "lastUpdated": "2026-05-19",
+  "refs": [
+    {
+      "name": "Dan Jablonski",
+      "x_handle": "@DanJablonski",
+      "why": "X growth, community building, Web3 growth loops",
+      "learn": ["growth loops", "community flywheel", "viral mechanics"],
+      "studyFrequency": "weekly",
+      "lastStudied": null,
+      "patternsExtracted": []
+    }
+  ],
+  "rules": {
+    "neverCopyContent": true,
+    "extractFrameworksOnly": true,
+    "neverAttribute": "without_verification",
+    "purpose": "learn_what_makes_them_successful"
+  }
+}
