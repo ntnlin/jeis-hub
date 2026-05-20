@@ -1,0 +1,25 @@
+{
+  "_schema": "token_usage_v1",
+  "_description": "Token consumption tracking for optimization",
+  "sessions": [],
+  "daily": {},
+  "totals": {
+    "allTime": 0,
+    "thisMonth": 0,
+    "thisWeek": 0,
+    "today": 0
+  },
+  "budgets": {
+    "sessionBudget": 450000,
+    "alertAt": 360000,
+    "pauseAt": 427500
+  },
+  "sessionSchema": {
+    "sessionId": "string",
+    "startedAt": "ISO",
+    "endedAt": "ISO",
+    "tokensUsed": 0,
+    "operations": [],
+    "alerts": []
+  }
+}
