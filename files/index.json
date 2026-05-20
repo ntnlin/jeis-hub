@@ -1,0 +1,8 @@
+{
+  "_schema": "files_index_v1",
+  "_description": "Master index of all stored files. Hash-checked before every store.",
+  "files": [],
+  "hashes": {},
+  "lastUpdated": null,
+  "totalFiles": 0
+}

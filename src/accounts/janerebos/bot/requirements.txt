@@ -1,0 +1,6 @@
+xdk
+anthropic
+openai
+python-dotenv
+apscheduler
+pytz

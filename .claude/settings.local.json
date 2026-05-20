@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(node -e ' *)",
+      "Bash(node --input-type=module -e ' *)"
+    ]
+  }
+}

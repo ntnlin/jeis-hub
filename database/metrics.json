@@ -1,0 +1,42 @@
+{
+  "_schema": "metrics_v1",
+  "_description": "Traction and user metrics per project",
+  "projects": {
+    "vezta": {
+      "dau": null, "wau": null, "mau": null,
+      "retention_d7": null, "retention_d30": null, "churn_rate": null,
+      "peak_hours": [], "avg_session_minutes": null,
+      "top10_power_users": [],
+      "heavy_user_threshold": null,
+      "growth_acceleration": null,
+      "lastUpdated": null, "source": null, "confidence": null
+    },
+    "tasmil": {
+      "dau": null, "wau": null, "mau": null,
+      "retention_d7": null, "retention_d30": null, "churn_rate": null,
+      "peak_hours": [], "avg_session_minutes": null,
+      "top10_power_users": [],
+      "heavy_user_threshold": null,
+      "growth_acceleration": null,
+      "lastUpdated": null, "source": null, "confidence": null
+    },
+    "syzy": {
+      "dau": null, "wau": null, "mau": null,
+      "retention_d7": null, "retention_d30": null, "churn_rate": null,
+      "peak_hours": [], "avg_session_minutes": null,
+      "top10_power_users": [],
+      "heavy_user_threshold": null,
+      "growth_acceleration": null,
+      "lastUpdated": null, "source": null, "confidence": null
+    },
+    "setlone": {
+      "dau": null, "wau": null, "mau": null,
+      "retention_d7": null, "retention_d30": null, "churn_rate": null,
+      "peak_hours": [], "avg_session_minutes": null,
+      "top10_power_users": [],
+      "heavy_user_threshold": null,
+      "growth_acceleration": null,
+      "lastUpdated": null, "source": null, "confidence": null
+    }
+  }
+}

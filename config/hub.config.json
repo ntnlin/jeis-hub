@@ -1,0 +1,46 @@
+{
+  "hub": {
+    "name": "Jei's Hub",
+    "version": "1.0.0",
+    "owner": "Jei (@jeivyou / @lindegen)",
+    "built": "2026-05-19",
+    "phase": 1
+  },
+  "session": {
+    "tokenBudget": 450000,
+    "alertPercent": 80,
+    "pausePercent": 95,
+    "durationMinutes": 300
+  },
+  "projects": ["vezta", "tasmil", "syzy", "setlone"],
+  "accounts": ["jeivyou", "janerebos"],
+  "emails": ["lindotfun@gmail.com", "jeivyoung@gmail.com", "jei@vezta.io", "ntnlin9@gmail.com"],
+  "telegram": ["@lindegen", "@jeivyoung"],
+  "discord": ["liniean", "jeivyou"],
+  "tones": ["degen", "casual", "formal"],
+  "dataIntegrity": {
+    "requireSource": true,
+    "requireTimestamp": true,
+    "requireConfidence": true,
+    "minConfidence": 60,
+    "hashCheck": true,
+    "auditTrail": true
+  },
+  "learning": {
+    "enabled": true,
+    "extractPatterns": true,
+    "updateSkills": true,
+    "archiveSuccesses": true
+  },
+  "notifications": {
+    "terminal": true,
+    "dashboard": true,
+    "email": "urgent_only",
+    "telegram": false
+  },
+  "storage": {
+    "archiveAfterDays": 30,
+    "compressJson": true,
+    "maxFileSizeMb": 50
+  }
+}

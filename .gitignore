@@ -1,0 +1,40 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs
+logs/
+*.log
+
+# Data (local only)
+data/upload/
+data/cache/
+
+# Database (sensitive)
+database/token-usage.json
+database/hashes.json
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sensitive files
+*.pem
+*.key
+credentials.json

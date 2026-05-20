@@ -1,0 +1,11 @@
+{
+  "category": "marketing",
+  "description": "Marketing experts to study for campaign frameworks",
+  "lastUpdated": "2026-05-19",
+  "refs": [],
+  "rules": {
+    "neverCopyContent": true,
+    "extractFrameworksOnly": true,
+    "purpose": "campaign_content_strategy"
+  }
+}

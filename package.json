@@ -1,0 +1,34 @@
+{
+  "name": "jeis-hub",
+  "version": "1.0.0",
+  "description": "Autonomous AI second brain for Web3 operator Jei (@jeivyou / @lindegen)",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "server": "node main.js --server",
+    "dev": "node --watch main.js"
+  },
+  "keywords": [
+    "web3",
+    "ai",
+    "autonomous",
+    "second-brain"
+  ],
+  "author": "Jei (@jeivyou)",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
+    "axios": "^1.16.1",
+    "chalk": "^5.6.2",
+    "chokidar": "^5.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.2",
+    "fs-extra": "^11.3.5",
+    "node-cron": "^4.2.1",
+    "openai": "^6.38.0",
+    "puppeteer": "^25.0.4",
+    "readline": "^1.3.0"
+  }
+}

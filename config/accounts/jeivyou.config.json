@@ -1,0 +1,27 @@
+{
+  "account": "jeivyou",
+  "handle": "@jeivyou",
+  "platform": "X",
+  "type": "main",
+  "persona": "Web3 degen builder",
+  "tones": ["degen", "casual", "formal"],
+  "automation": {
+    "tweets": true,
+    "replies": true,
+    "dms": true
+  },
+  "learning": {
+    "sources": ["ref-links/growth.json"],
+    "extractFrameworks": true,
+    "neverCopyContent": true
+  },
+  "contentRules": {
+    "degenOnly": "trending_topics_only",
+    "neverShill": true,
+    "neverGeneric": true,
+    "neverFabricate": true
+  },
+  "dataPath": "files/accounts/jeivyou",
+  "engagementTracking": true,
+  "performanceArchive": true
+}
