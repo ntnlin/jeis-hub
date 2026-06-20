@@ -1,10 +1,11 @@
 /**
- * Section 6B - Tweet Composer
+ * Tweet Composer
  * Topic → 3 tone options × format types → schedule or post
  */
 
-import { writeFileSync } from 'fs';
 import { generate3Tones, callClaude } from '../core/claudeAPI.js';
+import { extractJson } from '../core/jsonParse.js';
+import { writeFileSafe } from '../core/storage.js';
 
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
 
@@ -21,7 +22,7 @@ export async function composeTweet(topic, format = 'single', account = 'jeivyou'
       messages: [{ role: 'user', content: `Topic: ${topic}` }],
       maxTokens: 3000
     });
-    tones = { thread: JSON.parse(text) };
+    tones = { thread: extractJson(text) };
   } else {
     tones = await generate3Tones(topic, context);
   }
@@ -38,7 +39,7 @@ export async function composeTweet(topic, format = 'single', account = 'jeivyou'
     performance: null
   };
 
-  writeFileSync(`./files/accounts/${account}/${TODAY}/tweets.md`,
+  writeFileSafe(`./files/accounts/${account}/${TODAY}/tweets.md`,
     `# Tweet - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n**Format:** ${format}\n\n${format === 'thread' ? JSON.stringify(tones.thread, null, 2) : `**DEGEN:**\n${tones.degen}\n\n**CASUAL:**\n${tones.casual}\n\n**FORMAL:**\n${tones.formal}`}\n---\n`,
     { flag: 'a' }
   );

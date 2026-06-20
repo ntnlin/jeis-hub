@@ -1,11 +1,13 @@
 /**
- * Section 6C - BD Outreach Automation
+ * BD Outreach Automation
  * Research target → identify synergy → write short+specific message → track
  */
 
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { callClaude } from '../core/claudeAPI.js';
 import { Notifier } from '../core/notifier.js';
+import { extractJson } from '../core/jsonParse.js';
+import { writeJsonSafe } from '../core/storage.js';
 
 const notifier = new Notifier();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -22,7 +24,7 @@ export async function generateOutreach(target, projectContext, channel = 'dm') {
     maxTokens: 512
   });
 
-  const researchData = JSON.parse(research);
+  const researchData = extractJson(research);
 
   const { text: message } = await callClaude({
     system: `Write a BD outreach message from Jei (@jeivyou) to ${target.handle || target.name}. Rules:\n- Short (2-3 sentences max)\n- Specific (reference their actual work)\n- No generic praise ("love your work", "huge fan")\n- No boring subject lines\n- Identify specific synergy point\n- State specific ask\n- Never shill without context\nOutput JSON: { subject, body, tone: "formal" }.`,
@@ -36,7 +38,7 @@ export async function generateOutreach(target, projectContext, channel = 'dm') {
     channel,
     project: projectContext,
     research: researchData,
-    message: JSON.parse(message),
+    message: extractJson(message),
     status: 'draft',
     sentAt: null,
     generatedAt: new Date().toISOString()
@@ -44,7 +46,7 @@ export async function generateOutreach(target, projectContext, channel = 'dm') {
 
   const log = loadLog();
   log.push(outreach);
-  writeFileSync(LOG_PATH, JSON.stringify(log, null, 2));
+  writeJsonSafe(LOG_PATH, log);
 
   return outreach;
 }
@@ -58,7 +60,7 @@ export function updateOutreachStatus(id, status, notes = '') {
     if (notes) entry.notes = notes;
     if (status === 'sent') entry.sentAt = new Date().toISOString();
     if (status === 'replied') notifier.opportunity(`BD reply received from ${entry.target}!`);
-    writeFileSync(LOG_PATH, JSON.stringify(log, null, 2));
+    writeJsonSafe(LOG_PATH, log);
   }
   return entry;
 }

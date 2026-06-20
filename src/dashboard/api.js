@@ -7,7 +7,6 @@ import { readFileSync, existsSync } from 'fs';
 import { getDailyCalendar, getUpcoming } from '../calendar/eventManager.js';
 import { getStats } from '../outreach/outreachTracker.js';
 import { Notifier } from '../core/notifier.js';
-import { TokenMonitor } from '../core/tokenMonitor.js';
 
 export const apiRouter = Router();
 const notifier = new Notifier();
@@ -18,12 +17,16 @@ function safeRead(path, fallback = {}) {
 }
 
 apiRouter.get('/status', (req, res) => {
-  const tokenMonitor = new TokenMonitor();
+  // The dashboard runs in its own process, so report persisted token totals
+  // from disk rather than an in-memory session count that is always 0 here.
+  const usage = safeRead('./database/token-usage.json');
+  const budget = usage.budgets?.sessionBudget || 0;
   res.json({
     status: 'running',
     version: '1.0.0',
-    tokenUsage: `${tokenMonitor.getUsagePercent()}%`,
-    sessionTokens: tokenMonitor.sessionTokens,
+    tokensToday: usage.totals?.today || 0,
+    tokensAllTime: usage.totals?.allTime || 0,
+    sessionBudget: budget,
     timestamp: new Date().toISOString()
   });
 });

@@ -2,9 +2,10 @@
  * jeivyou Discord - DMs inbox only
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const notifier = new Notifier();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -17,7 +18,7 @@ export async function classifyDM(message) {
     maxTokens: 512
   });
 
-  const result = JSON.parse(text);
+  const result = extractJson(text);
   result.account = ACCOUNT;
   result.platform = 'discord';
   result.processedAt = new Date().toISOString();
@@ -26,7 +27,7 @@ export async function classifyDM(message) {
     notifier.urgent(`Discord ${ACCOUNT}: ${result.summary}`);
   }
 
-  writeFileSync(`./files/inbox/discord/${TODAY}/${Date.now()}-jeivyou.json`, JSON.stringify(result, null, 2));
+  writeJsonSafe(`./files/inbox/discord/${TODAY}/${Date.now()}-jeivyou.json`, result);
   return result;
 }
 

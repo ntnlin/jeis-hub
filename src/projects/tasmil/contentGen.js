@@ -2,9 +2,10 @@
  * Tasmil - Content Generator | DeFAI ONLY - NOT RWA
  */
 
-import { writeFileSync } from 'fs';
 import { generate3Tones } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeFileSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -19,7 +20,7 @@ export async function generateTweet(topic, channel = 'x') {
   Object.values(tones).forEach(t => validator.checkTasmilRWA('tasmil', t));
 
   const content = { project: 'tasmil', type: 'tweet', defaiOnly: true, channel, topic, tones, generatedAt: new Date().toISOString(), status: 'draft' };
-  writeFileSync(`./files/projects/tasmil/${TODAY}/content/tweet-${Date.now()}.md`,
+  writeFileSafe(`./files/projects/tasmil/${TODAY}/content/tweet-${Date.now()}.md`,
     `# Tasmil Tweet - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n\n**DEGEN:**\n${tones.degen}\n\n**CASUAL:**\n${tones.casual}\n\n**FORMAL:**\n${tones.formal}\n`
   );
   return content;
@@ -35,9 +36,9 @@ export async function generateThread(topic, points = []) {
     maxTokens: 3000
   });
 
-  const thread = JSON.parse(text);
+  const thread = extractJson(text);
   validator.checkTasmilRWA('tasmil', JSON.stringify(thread));
-  writeFileSync(`./files/projects/tasmil/${TODAY}/content/thread-${Date.now()}.md`,
+  writeFileSafe(`./files/projects/tasmil/${TODAY}/content/thread-${Date.now()}.md`,
     `# Tasmil Thread - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n\n${thread.map((t, i) => `**Tweet ${i + 1}:**\n${JSON.stringify(t, null, 2)}`).join('\n\n')}\n`
   );
   return { project: 'tasmil', type: 'thread', topic, thread, generatedAt: new Date().toISOString() };

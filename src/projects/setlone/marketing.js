@@ -2,10 +2,11 @@
  * Setlone - Marketing Module (TBD)
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const notifier = new Notifier();
@@ -21,7 +22,7 @@ export async function generateCampaignBrief(strategy, campaignGoal) {
     maxTokens: 2048
   });
 
-  const campaign = { project: 'setlone', isTBD: true, status: 'draft', createdAt: new Date().toISOString(), brief: JSON.parse(text) };
-  writeFileSync(`./files/projects/setlone/${TODAY}/marketing.json`, JSON.stringify(campaign, null, 2));
+  const campaign = { project: 'setlone', isTBD: true, status: 'draft', createdAt: new Date().toISOString(), brief: extractJson(text) };
+  writeJsonSafe(`./files/projects/setlone/${TODAY}/marketing.json`, campaign);
   return campaign;
 }

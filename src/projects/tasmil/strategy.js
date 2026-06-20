@@ -6,6 +6,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -28,14 +30,14 @@ export async function generateMonthlyStrategy(context) {
     defaiOnly: true,
     generatedAt: new Date().toISOString(),
     approvalStatus: 'pending_jei_review',
-    strategy: JSON.parse(text),
+    strategy: extractJson(text),
     editHistory: []
   };
 
   const check = validator.checkTasmilRWA('tasmil', JSON.stringify(strategy));
   if (check.flagged) throw new Error('RWA content in generated strategy - blocked');
 
-  writeFileSync(`${DATA_PATH}/strategy.json`, JSON.stringify(strategy, null, 2));
+  writeJsonSafe(`${DATA_PATH}/strategy.json`, strategy);
   return strategy;
 }
 
@@ -46,7 +48,7 @@ export async function generateWeeklyPlan(monthlyStrategy, weekNumber) {
     maxTokens: 2048
   });
 
-  return { week: weekNumber, tasks: JSON.parse(text), status: 'pending_jei_approval' };
+  return { week: weekNumber, tasks: extractJson(text), status: 'pending_jei_approval' };
 }
 
 export function approveStrategy(strategyPath, approved = true, edits = null) {

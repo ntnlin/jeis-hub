@@ -1,10 +1,12 @@
 /**
- * Section 6D - Partnership Pitch Generator
+ * Partnership Pitch Generator
  */
 
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { callClaude } from '../core/claudeAPI.js';
 import { Notifier } from '../core/notifier.js';
+import { extractJson } from '../core/jsonParse.js';
+import { writeJsonSafe } from '../core/storage.js';
 
 const notifier = new Notifier();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -26,14 +28,14 @@ export async function generatePitch(opportunity, project) {
     project,
     partner: opportunity.name,
     status: 'identified',
-    pitch: JSON.parse(text),
+    pitch: extractJson(text),
     createdAt: new Date().toISOString(),
     attempts: []
   };
 
   const log = loadLog();
   log.push(pitch);
-  writeFileSync(LOG_PATH, JSON.stringify(log, null, 2));
+  writeJsonSafe(LOG_PATH, log);
   notifier.opportunity(`Partnership pitch ready: ${project} × ${opportunity.name}`);
   return pitch;
 }

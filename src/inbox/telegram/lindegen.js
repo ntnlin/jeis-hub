@@ -2,9 +2,10 @@
  * @lindegen Telegram - Monitor specific folders (Jei defines)
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const notifier = new Notifier();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -19,7 +20,7 @@ export async function classifyMessage(message, folder = 'default') {
     maxTokens: 512
   });
 
-  const result = JSON.parse(text);
+  const result = extractJson(text);
   result.account = ACCOUNT;
   result.folder = folder;
   result.processedAt = new Date().toISOString();
@@ -28,7 +29,7 @@ export async function classifyMessage(message, folder = 'default') {
     notifier.urgent(`Telegram ${ACCOUNT} [${folder}]: ${result.summary}`);
   }
 
-  writeFileSync(`./files/inbox/telegram/${TODAY}/${Date.now()}-lindegen.json`, JSON.stringify(result, null, 2));
+  writeJsonSafe(`./files/inbox/telegram/${TODAY}/${Date.now()}-lindegen.json`, result);
   return result;
 }
 

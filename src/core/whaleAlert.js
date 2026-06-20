@@ -1,11 +1,12 @@
 /**
- * Section 13D - Whale Alert System (Vezta-specific)
+ * Whale Alert System (Vezta-specific)
  * Monitor large wallet movements, volume spikes, whale behavior
  */
 
 import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { Notifier } from './notifier.js';
 import { callClaude } from './claudeAPI.js';
+import { extractJson } from './jsonParse.js';
 
 const notifier = new Notifier();
 const WHALE_DB = './database/whale-alerts.json';
@@ -45,7 +46,7 @@ export async function analyzeWhaleWallet(walletAddress, transactions) {
     maxTokens: 1024
   });
 
-  const analysis = JSON.parse(text);
+  const analysis = extractJson(text);
   const db = loadDB();
   db.patterns.push({ wallet: walletAddress, ...analysis, analyzedAt: new Date().toISOString() });
   writeFileSync(WHALE_DB, JSON.stringify(db, null, 2));

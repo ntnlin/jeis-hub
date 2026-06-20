@@ -2,8 +2,9 @@
  * @jeivyou - DM management and outreach
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeFileSafe } from '../../core/storage.js';
 
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
 const JEIVYOU_CONTEXT = '@jeivyou is Jei - Web3 operator. DMs: direct, specific, no generic intros. For BD: research target first, identify synergy, write short+specific. Never: "love your work", "huge fan", "great project".';
@@ -14,7 +15,7 @@ export async function classifyIncomingDM(dmText, senderHandle) {
     messages: [{ role: 'user', content: `Sender: ${senderHandle}\nMessage: ${dmText}` }],
     maxTokens: 512
   });
-  return { ...JSON.parse(text), sender: senderHandle, receivedAt: new Date().toISOString() };
+  return { ...extractJson(text), sender: senderHandle, receivedAt: new Date().toISOString() };
 }
 
 export async function composeDM(target, purpose, projectContext = '') {
@@ -24,8 +25,8 @@ export async function composeDM(target, purpose, projectContext = '') {
     maxTokens: 512
   });
 
-  const dm = { ...JSON.parse(text), account: 'jeivyou', target, purpose, generatedAt: new Date().toISOString(), status: 'draft' };
-  writeFileSync(`./files/accounts/jeivyou/${TODAY}/dms.md`,
+  const dm = { ...extractJson(text), account: 'jeivyou', target, purpose, generatedAt: new Date().toISOString(), status: 'draft' };
+  writeFileSafe(`./files/accounts/jeivyou/${TODAY}/dms.md`,
     `# @jeivyou DM - ${new Date().toISOString()}\n\n**To:** ${target}\n**Purpose:** ${purpose}\n\n${dm.body}\n---\n`,
     { flag: 'a' }
   );

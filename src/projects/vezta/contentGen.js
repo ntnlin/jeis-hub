@@ -3,9 +3,10 @@
  * 3 tones × multiple channels, learns from viral content
  */
 
-import { writeFileSync } from 'fs';
 import { generate3Tones } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeFileSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -27,7 +28,7 @@ export async function generateTweet(topic, channel = 'x') {
     performance: null
   };
 
-  writeFileSync(`./files/projects/vezta/${TODAY}/content/tweet-${Date.now()}.md`,
+  writeFileSafe(`./files/projects/vezta/${TODAY}/content/tweet-${Date.now()}.md`,
     `# Vezta Tweet - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n\n**DEGEN:**\n${tones.degen}\n\n**CASUAL:**\n${tones.casual}\n\n**FORMAL:**\n${tones.formal}\n`
   );
   return content;
@@ -41,8 +42,8 @@ export async function generateThread(topic, points = []) {
     maxTokens: 3000
   });
 
-  const thread = JSON.parse(text);
-  writeFileSync(`./files/projects/vezta/${TODAY}/content/thread-${Date.now()}.md`,
+  const thread = extractJson(text);
+  writeFileSafe(`./files/projects/vezta/${TODAY}/content/thread-${Date.now()}.md`,
     `# Vezta Thread - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n\n${thread.map((t, i) => `**Tweet ${i + 1}:**\n${JSON.stringify(t, null, 2)}`).join('\n\n')}\n`
   );
   return { project: 'vezta', type: 'thread', topic, thread, generatedAt: new Date().toISOString() };
@@ -56,6 +57,6 @@ export async function generateBlog(topic, outline = '') {
     maxTokens: 4096
   });
 
-  writeFileSync(`./files/projects/vezta/${TODAY}/content/blog-${Date.now()}.md`, text);
+  writeFileSafe(`./files/projects/vezta/${TODAY}/content/blog-${Date.now()}.md`, text);
   return { project: 'vezta', type: 'blog', topic, generatedAt: new Date().toISOString() };
 }

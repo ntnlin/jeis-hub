@@ -1,10 +1,10 @@
 /**
- * Section 13F - Export Functionality
+ * Export Functionality
  * PDF reports, investor decks, data tables, scheduled reports
  */
 
-import { writeFileSync, readFileSync } from 'fs';
 import { callClaude } from './claudeAPI.js';
+import { writeFileSafe } from './storage.js';
 
 export async function generateReport(type, data, options = {}) {
   const { project, period = 'monthly', format = 'markdown' } = options;
@@ -22,7 +22,7 @@ export async function generateReport(type, data, options = {}) {
   });
 
   const fileName = `./files/personal/misc/report-${type}-${project || 'hub'}-${Date.now()}.md`;
-  writeFileSync(fileName, text);
+  writeFileSafe(fileName, text);
   return { path: fileName, content: text, type, project, generatedAt: new Date().toISOString() };
 }
 
@@ -34,7 +34,7 @@ export async function generateInvestorDeck(project, metrics, milestones) {
   });
 
   const fileName = `./files/personal/misc/investor-deck-${project}-${Date.now()}.md`;
-  writeFileSync(fileName, text);
+  writeFileSafe(fileName, text);
   return { path: fileName, project, generatedAt: new Date().toISOString() };
 }
 

@@ -6,14 +6,9 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
 
-const SYSTEM_CACHE = new Map();
-
 export async function callClaude({ system, messages, maxTokens = 2048, model = 'claude-sonnet-4-6' }) {
-  const cacheKey = system?.slice(0, 100);
-  const cachedSystem = SYSTEM_CACHE.get(cacheKey);
-
-  const systemBlock = cachedSystem ?? [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }];
-  if (!cachedSystem) SYSTEM_CACHE.set(cacheKey, systemBlock);
+  // cache_control marks the system block for Anthropic-side prompt caching.
+  const systemBlock = [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }];
 
   const response = await client.messages.create({
     model,

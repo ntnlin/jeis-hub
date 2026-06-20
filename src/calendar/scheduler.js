@@ -2,10 +2,12 @@
  * Calendar Scheduler - Auto-sync deadlines, events, content, keywords
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import cron from 'node-cron';
 import { Notifier } from '../core/notifier.js';
 import { callClaude } from '../core/claudeAPI.js';
+import { extractJson } from '../core/jsonParse.js';
+import { writeJsonSafe } from '../core/storage.js';
 
 const notifier = new Notifier();
 const CAL_PATH = `./files/calendar`;
@@ -30,7 +32,7 @@ export function createEntry(entry) {
   const datePath = `${CAL_PATH}/${entry.date.replace(/-/g, '/')}-schedule.json`;
   const existing = existsSync(datePath) ? JSON.parse(readFileSync(datePath, 'utf8')) : { entries: [] };
   existing.entries.push(record);
-  writeFileSync(datePath, JSON.stringify(existing, null, 2));
+  writeJsonSafe(datePath, existing);
   return record;
 }
 
@@ -41,9 +43,9 @@ export async function addDailySNSSummary(date, snsData) {
     maxTokens: 2048
   });
 
-  const summary = JSON.parse(text);
+  const summary = extractJson(text);
   const keyPath = `${CAL_PATH}/${date.replace(/-/g, '/')}-keywords.json`;
-  writeFileSync(keyPath, JSON.stringify({ date, ...summary, createdAt: new Date().toISOString() }, null, 2));
+  writeJsonSafe(keyPath, { date, ...summary, createdAt: new Date().toISOString() });
   return summary;
 }
 

@@ -3,10 +3,11 @@
  * TBD - Jei defines persona, keywords, and network
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const notifier = new Notifier();
@@ -23,8 +24,8 @@ export async function analyzeUserData(rawData) {
     maxTokens: 2048
   });
 
-  const result = { analysis: JSON.parse(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
-  writeFileSync(`${DATA_PATH}/user-data.json`, JSON.stringify(result, null, 2));
+  const result = { analysis: extractJson(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
+  writeJsonSafe(`${DATA_PATH}/user-data.json`, result);
   notifier.warning('Setlone is TBD - keywords and competitors not yet defined. Update config/projects/setlone.config.json');
   return result;
 }
@@ -40,8 +41,8 @@ export async function analyzeCompetitorData(rawData) {
     maxTokens: 2048
   });
 
-  const result = { analysis: JSON.parse(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
-  writeFileSync(`${DATA_PATH}/competitor-data.json`, JSON.stringify(result, null, 2));
+  const result = { analysis: extractJson(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
+  writeJsonSafe(`${DATA_PATH}/competitor-data.json`, result);
   return result;
 }
 

@@ -1,5 +1,9 @@
 /**
- * Skill engine - auto-loads, updates, creates skills from patterns
+ * Skill engine - loads skill definitions for a task type and tracks usage counters.
+ *
+ * Skills are defined as JSON files under ./skills and registered in index.json.
+ * This engine does not synthesize new skills; it only loads existing ones and
+ * records how often each is used.
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -17,53 +21,30 @@ export class SkillEngine {
     const skill = this.index.skills[taskType];
     if (!skill) return null;
 
+    const skillFile = `./skills/${skill.file}`;
+    if (!existsSync(skillFile)) return null;
+
     skill.usageCount = (skill.usageCount || 0) + 1;
     skill.lastUsed = new Date().toISOString();
     this.save();
 
-    const skillFile = `./skills/${skill.file}`;
-    if (existsSync(skillFile)) {
-      return JSON.parse(readFileSync(skillFile, 'utf8'));
-    }
-    return skill;
+    return JSON.parse(readFileSync(skillFile, 'utf8'));
   }
 
-  async learnFromResult(taskType, result) {
+  learnFromResult(taskType, result) {
     if (!result?.output) return;
 
     const skill = this.index.skills[taskType];
-    if (skill) {
-      skill.executions = (skill.executions || 0) + 1;
-      skill.version = (skill.version || 1);
-      this.save();
-    } else {
-      this.autoCreate(taskType);
-    }
-  }
+    if (!skill) return;
 
-  autoCreate(taskType) {
-    if (this.index.skills[taskType]) return;
-
-    const skillId = `skill_${taskType}_${Date.now()}`;
-    this.index.skills[taskType] = {
-      name: taskType,
-      file: `${taskType}.json`,
-      triggers: [taskType],
-      version: 1,
-      usageCount: 1,
-      executions: 0,
-      performanceScore: null,
-      autoCreated: true,
-      createdAt: new Date().toISOString()
-    };
-
+    skill.executions = (skill.executions || 0) + 1;
     this.save();
   }
 
   updatePerformance(taskType, score) {
     const skill = this.index.skills[taskType];
     if (!skill) return;
-    const prev = skill.performanceScore || score;
+    const prev = skill.performanceScore ?? score;
     skill.performanceScore = (prev * 0.8) + (score * 0.2);
     this.save();
   }

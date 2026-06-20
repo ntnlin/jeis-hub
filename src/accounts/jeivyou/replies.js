@@ -2,8 +2,9 @@
  * @jeivyou - Auto-reply system (screenshot → AI options)
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude, generate3Tones } from '../../core/claudeAPI.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeFileSafe } from '../../core/storage.js';
 
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
 const JEIVYOU_CONTEXT = '@jeivyou is Jei - Web3 degen builder. Direct, insightful, authentic. Never: sáo rỗng, chung chung, bịa, shill, sượng, vô duyên.';
@@ -15,7 +16,7 @@ export async function generateReplyOptions(screenshotOCR) {
     maxTokens: 512
   });
 
-  const parsed = JSON.parse(contextAnalysis);
+  const parsed = extractJson(contextAnalysis);
   const prompt = `Reply to: "${parsed.originalText}"\nAuthor: ${parsed.author}\nContext: ${parsed.context}`;
   const tones = await generate3Tones(prompt, JEIVYOU_CONTEXT);
 
@@ -31,7 +32,7 @@ export async function generateReplyOptions(screenshotOCR) {
     status: 'awaiting_jei_selection'
   };
 
-  writeFileSync(`./files/accounts/jeivyou/${TODAY}/replies.md`,
+  writeFileSafe(`./files/accounts/jeivyou/${TODAY}/replies.md`,
     `# @jeivyou Reply Options - ${new Date().toISOString()}\n\n**Original:** ${parsed.originalText}\n**Author:** ${parsed.author}\n\n**DEGEN:**\n${tones.degen}\n\n**CASUAL:**\n${tones.casual}\n\n**FORMAL:**\n${tones.formal}\n---\n`,
     { flag: 'a' }
   );
@@ -46,5 +47,5 @@ export async function generateSmartReply(conversationHistory, lastMessage) {
     ],
     maxTokens: 1024
   });
-  return JSON.parse(text);
+  return extractJson(text);
 }

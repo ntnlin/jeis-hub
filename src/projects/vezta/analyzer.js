@@ -3,10 +3,12 @@
  * Part A: User Data | Part B: Competitor Data | Part C: SNS Data
  */
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const CONFIG = JSON.parse(readFileSync('./config/projects/vezta.config.json', 'utf8'));
 const validator = new DataValidator();
@@ -24,8 +26,8 @@ export async function analyzeUserData(rawData) {
     maxTokens: 2048
   });
 
-  const result = { analysis: JSON.parse(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
-  writeFileSync(`${DATA_PATH}/user-data.json`, JSON.stringify(result, null, 2));
+  const result = { analysis: extractJson(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
+  writeJsonSafe(`${DATA_PATH}/user-data.json`, result);
   return result;
 }
 
@@ -39,8 +41,8 @@ export async function analyzeCompetitorData(rawData) {
     maxTokens: 2048
   });
 
-  const result = { analysis: JSON.parse(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
-  writeFileSync(`${DATA_PATH}/competitor-data.json`, JSON.stringify(result, null, 2));
+  const result = { analysis: extractJson(text), meta: { source: stamped.source, timestamp: stamped.timestamp, confidence: stamped.confidence } };
+  writeJsonSafe(`${DATA_PATH}/competitor-data.json`, result);
   return result;
 }
 
@@ -54,8 +56,8 @@ export async function analyzeSNS(rawData) {
     maxTokens: 3000
   });
 
-  const result = { keywords, analysis: JSON.parse(text), meta: { timestamp: new Date().toISOString(), confidence: 75 } };
-  writeFileSync(`${DATA_PATH}/sns-data.json`, JSON.stringify(result, null, 2));
+  const result = { keywords, analysis: extractJson(text), meta: { timestamp: new Date().toISOString(), confidence: 75 } };
+  writeJsonSafe(`${DATA_PATH}/sns-data.json`, result);
   notifier.opportunity(`Vezta SNS analysis complete. ${keywords.length} keywords tracked.`);
   return result;
 }

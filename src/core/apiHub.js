@@ -1,5 +1,5 @@
 /**
- * Section 13K - API Integration Hub
+ * API Integration Hub
  * Centralized API management with retry logic and error logging
  */
 

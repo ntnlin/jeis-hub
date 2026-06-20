@@ -2,9 +2,10 @@
  * jeivyoung@gmail.com - General Web3 inbox (priority: high, no filter)
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const notifier = new Notifier();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -17,7 +18,7 @@ export async function processEmail(email) {
     maxTokens: 1024
   });
 
-  const result = JSON.parse(text);
+  const result = extractJson(text);
   result.account = ACCOUNT;
   result.processedAt = new Date().toISOString();
   result.readOnly = true;
@@ -26,7 +27,7 @@ export async function processEmail(email) {
     notifier.urgent(`${ACCOUNT}: ${result.subject}`);
   }
 
-  writeFileSync(`./files/inbox/email/${TODAY}/${Date.now()}-jeivyoung.json`, JSON.stringify(result, null, 2));
+  writeJsonSafe(`./files/inbox/email/${TODAY}/${Date.now()}-jeivyoung.json`, result);
   return result;
 }
 
@@ -36,5 +37,5 @@ export async function generateDailyDigest(emails) {
     messages: [{ role: 'user', content: JSON.stringify(emails) }],
     maxTokens: 1024
   });
-  return { account: ACCOUNT, date: TODAY, ...JSON.parse(text) };
+  return { account: ACCOUNT, date: TODAY, ...extractJson(text) };
 }

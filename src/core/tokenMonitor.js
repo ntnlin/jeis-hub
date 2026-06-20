@@ -55,3 +55,6 @@ export class TokenMonitor {
     writeFileSync(DB_PATH, JSON.stringify(this.db, null, 2));
   }
 }
+
+// Shared instance so session token counting is consistent across the process.
+export const tokenMonitor = new TokenMonitor();

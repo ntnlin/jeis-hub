@@ -1,9 +1,10 @@
 /**
- * Section 6E - Smart Reply Generator
+ * Smart Reply Generator
  * Context-aware, tone-detected, conversation-coherent
  */
 
 import { callClaude } from '../core/claudeAPI.js';
+import { extractJson } from '../core/jsonParse.js';
 
 const TONE_RULES = {
   degen: 'Gen-Z crypto native. Punchy 1-3 sentences. "ngl", "fr fr", "lowkey", "based". NEVER: shill, generic praise, "excited to", "thrilled to", sáo rỗng.',
@@ -11,15 +12,15 @@ const TONE_RULES = {
   formal: 'Professional, structured, evidence-based. Clear value prop. No slang. NEVER: generic, off-topic, fabricate.'
 };
 
-export async function generateSmartReply(conversationHistory, lastMessage, forceТone = null) {
+export async function generateSmartReply(conversationHistory, lastMessage, forceTone = null) {
   const { text: toneDetection } = await callClaude({
     system: `Analyze this conversation and detect the most appropriate tone. Options: degen|casual|formal. Base on: context, relationship, platform, formality of original message. Output JSON: { detectedTone, reasoning }.`,
     messages: [{ role: 'user', content: `History: ${JSON.stringify(conversationHistory)}\nLast: ${lastMessage}` }],
     maxTokens: 256
   });
 
-  const { detectedTone } = JSON.parse(toneDetection);
-  const tone = forceТone || detectedTone;
+  const { detectedTone } = extractJson(toneDetection);
+  const tone = forceTone || detectedTone;
   const rules = TONE_RULES[tone] || TONE_RULES.casual;
 
   const { text } = await callClaude({

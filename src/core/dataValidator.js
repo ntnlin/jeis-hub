@@ -10,9 +10,9 @@ export class DataValidator {
   validate(data) {
     if (!data) return { ok: false, reason: 'empty data' };
 
-    if (this.hasFabricationSignals(data)) {
-      notifier.alert('CRITICAL', 'Fabrication signal detected - blocking store');
-      return { ok: false, reason: 'fabrication_detected' };
+    if (this.hasTemplateLeak(data)) {
+      notifier.alert('CRITICAL', 'Template/placeholder text detected - blocking store');
+      return { ok: false, reason: 'template_leak_detected' };
     }
 
     const warnings = [];
@@ -34,13 +34,13 @@ export class DataValidator {
     return { ok: true, warnings };
   }
 
-  hasFabricationSignals(data) {
+  // Coarse check for unedited template/placeholder text leaking into stored data.
+  // Deliberately narrow to avoid false positives on legitimate content that
+  // happens to mention words like "test" or "mock".
+  hasTemplateLeak(data) {
     const str = JSON.stringify(data).toLowerCase();
-    const fabricationPhrases = [
-      'example.com', 'placeholder', 'lorem ipsum',
-      'test data', 'fake user', 'mock data'
-    ];
-    return fabricationPhrases.some(p => str.includes(p));
+    const templateMarkers = ['lorem ipsum', 'example.com', 'placeholder text', 'your_api_key'];
+    return templateMarkers.some(p => str.includes(p));
   }
 
   stamp(data, source, confidence = 80) {

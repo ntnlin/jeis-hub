@@ -5,6 +5,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -21,10 +23,10 @@ export async function generateMonthlyStrategy(context) {
   const strategy = {
     project: 'syzy', period: 'monthly', status: 'draft',
     generatedAt: new Date().toISOString(), approvalStatus: 'pending_jei_review',
-    strategy: JSON.parse(text), editHistory: []
+    strategy: extractJson(text), editHistory: []
   };
 
-  writeFileSync(`./files/projects/syzy/${TODAY}/strategy.json`, JSON.stringify(strategy, null, 2));
+  writeJsonSafe(`./files/projects/syzy/${TODAY}/strategy.json`, strategy);
   return strategy;
 }
 
@@ -34,7 +36,7 @@ export async function generateWeeklyPlan(monthlyStrategy, weekNumber) {
     messages: [{ role: 'user', content: JSON.stringify(monthlyStrategy) }],
     maxTokens: 2048
   });
-  return { week: weekNumber, tasks: JSON.parse(text), status: 'pending_jei_approval' };
+  return { week: weekNumber, tasks: extractJson(text), status: 'pending_jei_approval' };
 }
 
 export function approveStrategy(strategyPath, approved = true, edits = null) {

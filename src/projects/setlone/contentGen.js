@@ -2,10 +2,10 @@
  * Setlone - Content Generator (TBD)
  */
 
-import { writeFileSync } from 'fs';
 import { generate3Tones } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
 import { Notifier } from '../../core/notifier.js';
+import { writeFileSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const notifier = new Notifier();
@@ -17,7 +17,7 @@ export async function generateTweet(topic, channel = 'x', projectContext = 'Setl
 
   const tones = await generate3Tones(topic, projectContext);
   const content = { project: 'setlone', isTBD: true, type: 'tweet', channel, topic, tones, generatedAt: new Date().toISOString(), status: 'draft' };
-  writeFileSync(`./files/projects/setlone/${TODAY}/content/tweet-${Date.now()}.md`,
+  writeFileSafe(`./files/projects/setlone/${TODAY}/content/tweet-${Date.now()}.md`,
     `# Setlone Tweet - ${new Date().toISOString()}\n\n**Topic:** ${topic}\n\n**DEGEN:**\n${tones.degen}\n\n**CASUAL:**\n${tones.casual}\n\n**FORMAL:**\n${tones.formal}\n`
   );
   return content;

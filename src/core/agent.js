@@ -3,8 +3,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { readFileSync } from 'fs';
-import { TokenMonitor } from './tokenMonitor.js';
+import { tokenMonitor } from './tokenMonitor.js';
 import { FileHandler } from './fileHandler.js';
 import { Notifier } from './notifier.js';
 import { SkillEngine } from './skillEngine.js';
@@ -12,11 +11,10 @@ import { DataValidator } from './dataValidator.js';
 import { HermesBridge } from './hermesBridge.js';
 
 const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
-const hubConfig = JSON.parse(readFileSync('./config/hub.config.json', 'utf8'));
 
 export class MasterAgent {
   constructor() {
-    this.tokenMonitor = new TokenMonitor();
+    this.tokenMonitor = tokenMonitor;
     this.fileHandler = new FileHandler();
     this.notifier = new Notifier();
     this.skillEngine = new SkillEngine();
@@ -30,7 +28,7 @@ export class MasterAgent {
 
     if (this.tokenMonitor.isNearLimit()) {
       this.notifier.alert('WARNING', 'Token budget at 80%. Pausing non-critical ops.');
-      return;
+      return { output: null, paused: true, reason: 'token_budget_near_limit' };
     }
 
     if (this.hermesBridge.shouldHandle(type)) {
@@ -53,7 +51,7 @@ export class MasterAgent {
 
     if (!validated.ok) {
       this.notifier.alert('CRITICAL', `Data integrity fail: ${validated.reason}`);
-      return;
+      return { output: null, error: 'data_validation_failed', reason: validated.reason };
     }
 
     const result = await this.execute(type, data, context, skill);
@@ -74,7 +72,8 @@ export class MasterAgent {
     });
 
     this.tokenMonitor.track(response.usage);
-    return { output: response.content[0].text, usage: response.usage };
+    const textBlock = response.content.find(b => b.type === 'text');
+    return { output: textBlock?.text ?? '', usage: response.usage };
   }
 
   buildMessage(type, data, context) {
@@ -82,7 +81,7 @@ export class MasterAgent {
   }
 
   defaultSystemPrompt() {
-    return `You are Jei's autonomous second brain. Never fabricate data. Always cite sources. Always include timestamps and confidence scores. Projects: Vezta (Solana prediction), Tasmil (DeFAI ONLY - NOT RWA), Syzy (Stellar prediction), Setlone (TBD). Tones: degen (Gen-Z crypto, punchy), casual (friendly direct), formal (professional BD). Never: sáo rỗng, chung chung, bịa, shill, sượng.`;
+    return `You are Jei's autonomous second brain. Never fabricate data; when data is missing, say so. Projects: Vezta (Solana prediction), Tasmil (DeFAI ONLY - NOT RWA), Syzy (Stellar prediction), Setlone (TBD). Tones: degen (Gen-Z crypto, punchy), casual (friendly direct), formal (professional BD). Never: sáo rỗng, chung chung, bịa, shill, sượng.`;
   }
 
   async handleUpload(filePath) {

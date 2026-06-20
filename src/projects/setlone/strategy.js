@@ -6,6 +6,8 @@ import { readFileSync, writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
 import { Notifier } from '../../core/notifier.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const notifier = new Notifier();
@@ -24,11 +26,11 @@ export async function generateMonthlyStrategy(context) {
   const strategy = {
     project: 'setlone', period: 'monthly', status: 'draft', isTBD: true,
     generatedAt: new Date().toISOString(), approvalStatus: 'pending_jei_review',
-    strategy: JSON.parse(text), editHistory: [],
+    strategy: extractJson(text), editHistory: [],
     note: 'Jei must define project details before finalizing strategy'
   };
 
-  writeFileSync(`./files/projects/setlone/${TODAY}/strategy.json`, JSON.stringify(strategy, null, 2));
+  writeJsonSafe(`./files/projects/setlone/${TODAY}/strategy.json`, strategy);
   return strategy;
 }
 

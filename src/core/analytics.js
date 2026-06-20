@@ -1,7 +1,5 @@
 /**
- * Section 13A - Analytics Dashboard data provider
- * Section 13B - A/B Testing System
- * Section 13C - Sentiment Analysis
+ * Analytics - dashboard metrics, A/B testing, sentiment analysis
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';

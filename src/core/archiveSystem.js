@@ -1,5 +1,5 @@
 /**
- * Section 13G - Archive System | Section 13H - Rollback System
+ * Archive and rollback system for stored files
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, copyFileSync } from 'fs';

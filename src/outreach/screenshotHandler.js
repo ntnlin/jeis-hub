@@ -1,10 +1,11 @@
 /**
- * Section 6A - Screenshot/Comment Handler
+ * Screenshot/Comment Handler
  * Jei uploads screenshot → OCR → detect context → 3 reply options
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude, generate3Tones } from '../core/claudeAPI.js';
+import { extractJson } from '../core/jsonParse.js';
+import { writeJsonSafe } from '../core/storage.js';
 
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
 
@@ -20,9 +21,12 @@ export async function processScreenshot(imagePath, ocrText = null) {
     textContent = text;
   }
 
-  const parsed = typeof textContent === 'string' && textContent.startsWith('{')
-    ? JSON.parse(textContent)
-    : { platform: 'unknown', author: 'unknown', text: textContent, context: '', tone: 'neutral' };
+  let parsed;
+  try {
+    parsed = extractJson(textContent);
+  } catch {
+    parsed = { platform: 'unknown', author: 'unknown', text: textContent, context: '', tone: 'neutral' };
+  }
 
   const replyPrompt = `Reply to: "${parsed.text}" on ${parsed.platform}. Author: ${parsed.author}. Context: ${parsed.context}`;
   const tones = await generate3Tones(replyPrompt, 'Jei - Web3 builder. Never: sáo rỗng, chung chung, bịa, shill. Always: relevant, specific, real insight.');
@@ -34,7 +38,7 @@ export async function processScreenshot(imagePath, ocrText = null) {
     status: 'awaiting_jei_selection'
   };
 
-  writeFileSync(`./files/outreach/comments/${TODAY}/replies.json`, JSON.stringify(result, null, 2));
+  writeJsonSafe(`./files/outreach/comments/${TODAY}/replies.json`, result);
 
   console.log('\n📸 Screenshot processed. Choose tone:');
   console.log('DEGEN:', tones.degen);

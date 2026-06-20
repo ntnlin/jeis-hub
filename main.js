@@ -7,13 +7,12 @@ import dotenv from 'dotenv';
 import readline from 'readline';
 import chalk from 'chalk';
 import { MasterAgent } from './src/core/agent.js';
-import { TokenMonitor } from './src/core/tokenMonitor.js';
+import { tokenMonitor } from './src/core/tokenMonitor.js';
 import { Notifier } from './src/core/notifier.js';
 
 dotenv.config();
 
 const agent = new MasterAgent();
-const tokenMonitor = new TokenMonitor();
 const notifier = new Notifier();
 
 const BANNER = `
@@ -29,13 +28,9 @@ const COMMANDS = {
   '/status':   'System status and token usage',
   '/projects': 'List all projects',
   '/tweet [account] [topic]': 'Generate tweet in 3 tones',
-  '/reply':    'Generate reply options (paste screenshot text)',
-  '/analyze [project]': 'Analyze project data',
-  '/strategy [project]': 'Generate growth strategy',
-  '/bd [target]': 'Generate BD outreach',
+  '/calendar [date]': 'View calendar for a date (YYYY-MM-DD)',
   '/hermes [task]': 'Run bounded Hermes specialist agent',
   '/research [topic]': 'Research with bounded Hermes specialist agent',
-  '/calendar [date]': 'View calendar for date',
   '/quit':     'Exit hub'
 };
 
@@ -92,15 +87,23 @@ async function handleCommand(input) {
       break;
     }
 
+    case '/calendar': {
+      const date = args[0] || new Date().toISOString().split('T')[0];
+      const { getDailyCalendar } = await import('./src/calendar/eventManager.js');
+      const day = getDailyCalendar(date);
+      console.log(chalk.bold(`\nCalendar for ${date}:`));
+      if (!day.schedule.length) console.log(chalk.gray('  No entries.'));
+      day.schedule.forEach(e => console.log(`  ${chalk.cyan(e.type)} ${e.title}`));
+      break;
+    }
+
     case '/quit':
     case '/exit':
       console.log(chalk.gray('\nShutting down Jei\'s Hub... 👋\n'));
       process.exit(0);
 
     default:
-      const result = await agent.route({ type: cmd.replace('/', ''), data: args, context: {} });
-      if (result?.output) console.log('\n' + result.output);
-      else console.log(chalk.gray('Command processed.'));
+      console.log(chalk.gray(`Unknown command: ${cmd}. Type /help for the list.`));
   }
 }
 

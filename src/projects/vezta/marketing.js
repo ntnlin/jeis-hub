@@ -3,9 +3,10 @@
  * Campaigns, schedules, content themes, competitor learning
  */
 
-import { writeFileSync } from 'fs';
 import { callClaude } from '../../core/claudeAPI.js';
 import { DataValidator } from '../../core/dataValidator.js';
+import { extractJson } from '../../core/jsonParse.js';
+import { writeJsonSafe } from '../../core/storage.js';
 
 const validator = new DataValidator();
 const TODAY = new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -24,11 +25,11 @@ export async function generateCampaignBrief(strategy, campaignGoal) {
     project: 'vezta',
     status: 'draft',
     createdAt: new Date().toISOString(),
-    brief: JSON.parse(text),
+    brief: extractJson(text),
     performance: { impressions: null, conversions: null, cac: null }
   };
 
-  writeFileSync(`${DATA_PATH}/marketing.json`, JSON.stringify(campaign, null, 2));
+  writeJsonSafe(`${DATA_PATH}/marketing.json`, campaign);
   return campaign;
 }
 
@@ -39,5 +40,5 @@ export async function generateContentCalendar(month, themes) {
     maxTokens: 2048
   });
 
-  return { project: 'vezta', month, calendar: JSON.parse(text), createdAt: new Date().toISOString() };
+  return { project: 'vezta', month, calendar: extractJson(text), createdAt: new Date().toISOString() };
 }
